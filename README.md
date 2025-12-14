@@ -57,7 +57,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/Operations_Agent_System
+git clone https://github.com/kevinlmf/Operations_Agent_System
 cd Operations_Agent_System
 
 # Create and activate virtual environment
