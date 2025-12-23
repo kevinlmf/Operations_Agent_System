@@ -7,10 +7,12 @@ Considers:
 3. Uncertainty
 4. Dynamic programming multi-period decisions
 5. Time series forecasting
+6. Claude Agent Skills (Agentic AI with Tool Use)
 """
 
 import numpy as np
 import pandas as pd
+import os
 
 from evaluation.comparison.dynamic_scenario_evaluator import DynamicScenarioEvaluator, ScenarioCharacteristics
 from evaluation.comparison.net_benefit_optimizer import NetBenefitOptimizer
@@ -18,6 +20,7 @@ from agent.traditional.eoq import EOQMethod
 from agent.traditional.safety_stock import SafetyStockMethod
 from agent.rl_methods.dqn import DQNInventoryMethod
 from agent.ml_methods.lstm import LSTMInventoryMethod
+from agent.claude_agent import ClaudeAgentInventoryMethod
 from goal.interfaces import InventoryState
 
 
@@ -99,6 +102,35 @@ def main():
         print(f"    ✅ Safety Stock fitted")
     except Exception as e:
         print(f"    ❌ Safety Stock failed: {e}")
+
+    # Claude Agent Method (Agentic AI with Tool Use)
+    print("  🤖 Claude Agent Method (Agentic AI)...")
+    try:
+        # Get API key from environment variable
+        api_key = os.environ.get("ANTHROPIC_API_KEY")
+        
+        claude_agent = ClaudeAgentInventoryMethod(
+            api_key=api_key,
+            model="claude-sonnet-4-20250514",
+            holding_cost=2.0,
+            ordering_cost=50.0,
+            stockout_cost=10.0,
+            lead_time=1,
+            service_level=0.95,
+            use_extended_thinking=True,
+            max_tool_iterations=5,
+            fallback_mode=True  # Use local tools if API unavailable
+        )
+        claude_agent.fit(train_demand)
+        methods['Claude_Agent'] = claude_agent
+        
+        # Show agent status
+        params = claude_agent.get_parameters()
+        api_status = "API Connected" if params.get("api_available") else "Fallback Mode (Local Tools)"
+        print(f"    ✅ Claude Agent initialized - {api_status}")
+        print(f"       Demand Pattern: {params.get('demand_stats', {}).get('demand_pattern', 'analyzing...')}")
+    except Exception as e:
+        print(f"    ❌ Claude Agent failed: {e}")
 
     # ML Method: LSTM
     print("  🤖 ML Method: LSTM (Time Series)...")

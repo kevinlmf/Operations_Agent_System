@@ -2,10 +2,15 @@ import numpy as np
 from typing import Dict, List, Tuple, Any, Optional
 import logging
 from dataclasses import dataclass
+import sys
+from pathlib import Path
 
-from src.or_optimization.linear_programming import LogisticsScheduler
-from src.or_optimization.dynamic_programming import DynamicProgrammingSolver
-from src.or_optimization.mixed_integer_programming import FacilityLocationSolver
+# Add project root to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from agent.or_optimization.linear_programming import LogisticsScheduler
+from agent.or_optimization.dynamic_programming import DynamicProgrammingSolver
+from agent.or_optimization.mixed_integer_programming import FacilityLocationSolver
 
 logger = logging.getLogger(__name__)
 

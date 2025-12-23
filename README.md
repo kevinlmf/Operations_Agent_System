@@ -52,6 +52,39 @@
 - **Risk Measurement**: Standard deviation
 - **Risk-Adjusted Metric**: Expected Return - 0.5 × Risk
 
+### 6. Claude Agent Skills Integration
+
+Integration of Anthropic Claude's latest **Agent Skills** into the three-tier agent architecture:
+
+- **Tool Use**: Each agent has specialized OR tools + Claude tool calling
+- **Extended Thinking**: Deep multi-step reasoning for complex decisions
+- **Agentic Workflows**: Autonomous decision-making with context awareness
+- **Intelligent Constraint Propagation**: Strategic → Tactical → Operational
+
+#### Strategic Agent (MIP + AI)
+| Tool | Description |
+|------|-------------|
+| `analyze_facility_costs` | Analyze fixed vs variable cost trade-offs |
+| `evaluate_location_scenarios` | Evaluate different facility combinations |
+| `optimize_facility_selection` | Run MIP optimization |
+| `assess_strategic_risk` | Risk assessment for facility decisions |
+
+#### Tactical Agent (LP + AI)
+| Tool | Description |
+|------|-------------|
+| `analyze_supply_demand` | Supply-demand balance analysis |
+| `optimize_transportation` | LP transportation optimization |
+| `evaluate_route_efficiency` | Route efficiency evaluation |
+| `calculate_facility_requirements` | Calculate inbound volumes |
+
+#### Operational Agent (DP + AI)
+| Tool | Description |
+|------|-------------|
+| `analyze_inventory_items` | Value-weight trade-off analysis |
+| `optimize_inventory_mix` | DP knapsack optimization |
+| `evaluate_inventory_plan` | Plan quality evaluation |
+| `multi_facility_optimization` | Cross-facility optimization |
+
 
 ## Installation
 
@@ -94,6 +127,40 @@ Automatically optimize RL/DL parameters to outperform traditional methods:
 python optimize_for_dynamic.py
 ```
 
+### Evaluate Claude-Enhanced Agent System
+
+Compare Claude-enhanced agents with traditional pipeline:
+
+```bash
+# Without API key (uses fallback mode with local tools)
+python evaluate_agent_system.py
+
+# With Claude API (enables full reasoning)
+export ANTHROPIC_API_KEY="your-api-key"
+python evaluate_agent_system.py
+```
+
+### Run All Evaluations (One Command)
+
+Use the unified evaluation script to run all tests:
+
+```bash
+# Run all evaluations
+./evaluate.sh
+
+# Quick mode (skip slow training)
+./evaluate.sh --quick
+
+# Run specific evaluation
+./evaluate.sh --agent     # Claude Agent only
+./evaluate.sh --system    # Basic system only
+./evaluate.sh --benefit   # Net benefit only
+./evaluate.sh --dynamic   # Dynamic scenarios only
+
+# With Claude API
+ANTHROPIC_API_KEY="your-key" ./evaluate.sh
+```
+
 ## System Architecture
 
 ```
@@ -113,14 +180,29 @@ python optimize_for_dynamic.py
 │  Maximize: Revenue - (Holding + Stockout + Ordering + Impl)  │
 └────────────────────┬─────────────────────────────────────────┘
                      │
+┌────────────────────▼─────────────────────────────────────────┐
+│         Intelligent Orchestrator (Claude-Enhanced)            │
+│  Extended Thinking | Tool Use | Agentic Workflows             │
+└────────────────────┬─────────────────────────────────────────┘
+                     │
       ┌──────────────┼──────────────┐
       │              │              │
 ┌─────▼─────┐  ┌─────▼─────┐  ┌────▼──────┐
 │ Strategic │  │ Tactical  │  │Operational│
 │   Agent   │  │   Agent   │  │   Agent   │
-│   (MIP)   │  │   (LP)    │  │   (DP)    │
+│ (MIP+AI)  │  │  (LP+AI)  │  │  (DP+AI)  │
+│           │  │           │  │           │
+│ Tools:    │  │ Tools:    │  │ Tools:    │
+│ •Cost     │  │ •S/D      │  │ •Item     │
+│  Analysis │  │  Analysis │  │  Analysis │
+│ •Scenario │  │ •Transport│  │ •Knapsack │
+│  Eval     │  │  Optimize │  │  Optimize │
+│ •MIP Opt  │  │ •Route    │  │ •Multi-   │
+│ •Risk     │  │  Eval     │  │  Facility │
+│  Assess   │  │           │  │           │
 └─────┬─────┘  └─────┬─────┘  └────┬──────┘
       │              │              │
+      │   Constraint Propagation    │
       └──────────────┼──────────────┘
                      │
       ┌──────────────▼──────────────┐
@@ -153,6 +235,12 @@ Operations_Agent_System/
 │   ├── orchestrator/             # Multi-agent orchestration
 │   │   ├── orchestrator.py      # Main orchestrator
 │   │   └── definitions.py       # Context definitions
+│   ├── claude_enhanced/          # Claude Agent Skills Integration
+│   │   ├── agent_skills.py      # Tool definitions for all agents
+│   │   ├── enhanced_agents.py   # Claude-enhanced MIP/LP/DP agents
+│   │   └── intelligent_orchestrator.py  # AI-powered orchestration
+│   ├── claude_agent/             # Claude Inventory Agent
+│   │   └── claude_inventory_agent.py  # Standalone Claude agent
 │   ├── environment/              # RL environment
 │   │   └── env.py               # Gym-compatible environment
 │   └── or_optimization/          # OR optimizers
@@ -176,6 +264,7 @@ Operations_Agent_System/
 ├── evaluate_dynamic_scenarios.py  # Dynamic scenario evaluation
 ├── evaluate_net_benefit.py        # Net Benefit optimization
 ├── evaluate_system.py             # Basic system evaluation
+├── evaluate_agent_system.py       # Claude Agent vs Traditional comparison
 ├── optimize_for_dynamic.py        # RL/DL optimization
 └── README.md
 ```
@@ -242,6 +331,69 @@ Evaluation under dynamic conditions with seasonality, trends, and 20% uncertaint
 4. **Forecast Accuracy**: All methods achieve ~80% forecast accuracy, but action decisions vary significantly
 5. **Service Level Critical**: High service level (76.67%) directly correlates with Net Benefit maximization
 
+## Claude Agent Skills: How AI Beats Traditional Methods
+
+The Claude-enhanced agent system provides several advantages over traditional methods:
+
+### Intelligent Tool Selection
+
+Claude analyzes the problem context and selects the most appropriate tools:
+
+```python
+# Example: Claude Strategic Agent workflow
+1. analyze_facility_costs()     # Understand cost structure
+2. evaluate_location_scenarios() # Quick what-if analysis  
+3. optimize_facility_selection() # Run MIP optimization
+4. assess_strategic_risk()       # Validate decision
+```
+
+### Agentic Reasoning
+
+With Claude API enabled, agents perform multi-step reasoning:
+
+```
+Strategic Decision:
+├── Analyzed 5 facilities, found cost efficiency ranking [2, 0, 4, 1, 3]
+├── Evaluated 3 scenarios, scenario [0,2,4] has lowest total cost
+├── MIP optimization confirmed: open facilities [0, 1, 2, 4]
+└── Risk assessment: low risk, 23% capacity buffer
+
+Tactical Decision:
+├── Supply-demand analysis: feasible, 84% utilization
+├── LP optimization: $828.09 transport cost
+└── Route efficiency: 1.808 avg cost per unit
+
+Operational Decision:
+├── Item analysis: top density items [0, 1, 2]
+├── Multi-facility optimization: $2,115.99 total value
+└── Capacity used: 78-92% across facilities
+```
+
+### Constraint Propagation
+
+The intelligent orchestrator ensures optimal constraint flow:
+
+```
+Phase 1: Strategic (MIP)
+    └── Decision: Open facilities [0, 1, 2, 4]
+           │
+Phase 2: Tactical (LP) ← Receives: Only open facilities
+    └── Decision: Optimal transport flow
+           │
+Phase 3: Operational (DP) ← Receives: Facility volumes
+    └── Decision: Optimal inventory mix per facility
+```
+
+### When Claude Beats Traditional Methods
+
+| Scenario | Traditional | Claude-Enhanced | Advantage |
+|----------|-------------|-----------------|-----------|
+| Simple static | Fast | Overhead | Traditional |
+| Complex multi-facility | Manual tuning | Auto-reasoning | Claude |
+| Dynamic uncertainty | Fixed rules | Adaptive | Claude |
+| Explainability needed | Black box | Full reasoning | Claude |
+
+
 ## Future Work: Making ML/DL Beat Traditional Methods
 
 The current results show traditional methods (Safety Stock) significantly outperforming ML/DL approaches. Here's the roadmap to close this gap:
@@ -293,4 +445,4 @@ This project is licensed under the MIT License.
 
 ---
 
-May our lives keep optimizing, like finding balance in every step😊
+May our lives keep optimizing, like finding balance in every step😊.

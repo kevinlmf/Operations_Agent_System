@@ -3,10 +3,13 @@ Net Benefit Optimization Evaluation
 
 Objective: Find optimal inventory method maximizing Net Benefit = Revenue - Total Cost
 Constraint: Total Cost <= Cost Constraint
+
+Includes Claude Agent Skills for intelligent decision making.
 """
 
 import numpy as np
 import pandas as pd
+import os
 
 from evaluation.comparison.net_benefit_optimizer import NetBenefitOptimizer
 from evaluation.comparison.evaluator import EnhancedInventoryEvaluator
@@ -15,6 +18,7 @@ from agent.traditional.eoq import EOQMethod
 from agent.traditional.safety_stock import SafetyStockMethod
 from agent.rl_methods.dqn import DQNInventoryMethod
 from agent.ml_methods.lstm import LSTMInventoryMethod
+from agent.claude_agent import ClaudeAgentInventoryMethod
 from goal.interfaces import InventoryState
 
 
@@ -131,6 +135,33 @@ def main():
         print(f"    ✅ DQN trained")
     except Exception as e:
         print(f"    ❌ DQN failed: {e}")
+
+    # Claude Agent Method (Agentic AI with Tool Use)
+    print("  🤖 Claude Agent Method (Agentic AI)...")
+    try:
+        api_key = os.environ.get("ANTHROPIC_API_KEY")
+        
+        claude_agent = ClaudeAgentInventoryMethod(
+            api_key=api_key,
+            model="claude-sonnet-4-20250514",
+            holding_cost=2.0,
+            ordering_cost=50.0,
+            stockout_cost=10.0,
+            lead_time=1,
+            service_level=0.95,
+            use_extended_thinking=True,
+            max_tool_iterations=5,
+            fallback_mode=True
+        )
+        claude_agent.fit(train_demand)
+        methods['Claude_Agent'] = claude_agent
+        
+        params = claude_agent.get_parameters()
+        api_status = "API Connected" if params.get("api_available") else "Fallback Mode"
+        print(f"    ✅ Claude Agent initialized - {api_status}")
+        print(f"       Demand Pattern: {params.get('demand_stats', {}).get('demand_pattern', 'analyzing...')}")
+    except Exception as e:
+        print(f"    ❌ Claude Agent failed: {e}")
 
     if not methods:
         print("\n❌ No methods available for evaluation")
